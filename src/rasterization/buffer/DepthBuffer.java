@@ -1,5 +1,7 @@
 package rasterization.buffer;
 
+import screen.ScreenPoint;
+
 import java.util.Arrays;
 
 public class DepthBuffer {
@@ -7,7 +9,7 @@ public class DepthBuffer {
 
     public DepthBuffer(int width, int height) {
         depthBuffer = new float[width][height];
-        clear();
+        initialize();
     }
 
     private void initialize() {
@@ -16,10 +18,14 @@ public class DepthBuffer {
         }
     }
 
-    public boolean checkDepth(int x, int y, float depth) {
-        if (depth >= depthBuffer[x][y]) {
-            depthBuffer[x][y] = depth;
-            return true;
+    public boolean checkDepth(ScreenPoint point, float depth) {
+        try {
+            if (depth >= depthBuffer[point.getI()][point.getJ()]) {
+                depthBuffer[point.getI()][point.getJ()] = depth;
+                return true;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return false;
         }
         return false;
     }

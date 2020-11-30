@@ -22,7 +22,8 @@ public class Polygon {
     public Vector3 getNormal() {
         Vector3 u = point3.minus(point1);   //вычисляем вектора лежащие на плоскости
         Vector3 v = point2.minus(point1);
-        return u.getNormal(v); //находим нормаль полигона
+        Vector3 w = point2.minus(point3);
+        return (u.getNormal(v).plus(u.getNormal(w).plus(v.getNormal(w)))).mul(1f / 3f); //находим нормаль полигона
     }
 
     public Polygon() {

@@ -45,7 +45,7 @@ public class Vector3 {
         return this.getX() * other.getX() + this.getY() * other.getY() + this.getZ() * other.getZ();
     }
 
-    public Vector3 plus(Vector4 other) {
+    public Vector3 plus(Vector3 other) {
         float[] array = new float[3];
         for (int i = 0; i < array.length; i++)
             array[i] = this.at(i) + other.at(i);

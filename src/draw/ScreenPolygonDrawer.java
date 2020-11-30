@@ -7,12 +7,15 @@ package draw;
 import math.Vector3;
 import rasterization.polygonDrawers.PolygonDrawer;
 import screen.ScreenConverter;
+import screen.ScreenDepthPoint;
 import screen.ScreenPoint;
+import screen.ScreenPolygon;
 import third.Light;
 import third.Polygon;
 
 import java.awt.*;
 import java.util.Comparator;
+
 
 public class ScreenPolygonDrawer extends MyDrawer {
 
@@ -28,22 +31,31 @@ public class ScreenPolygonDrawer extends MyDrawer {
         ScreenPoint p1 = screenConverter.realToScreen(polygon.getPoint1());
         ScreenPoint p2 = screenConverter.realToScreen(polygon.getPoint2());
         ScreenPoint p3 = screenConverter.realToScreen(polygon.getPoint3());
-        //освещение
+        Color newColor = getNewColor(polygon);
+        ScreenPolygon screenPolygon = new ScreenPolygon(
+                polygon,
+                new ScreenDepthPoint(p1),
+                new ScreenDepthPoint(p2),
+                new ScreenDepthPoint(p3),
+                newColor);
+        if (polygon.isLine()) {
+            screenPolygon.setColor(polygon.getColor());
+            polygonDrawer.drawPolygon(screenPolygon);
+        }
+        else {
+            polygonDrawer.fillPolygon(screenPolygon);
+//            polygonDrawer.drawPolygon(screenPolygon);
+
+        }
+    }
+
+    private Color getNewColor(Polygon polygon) {
         Light light = getLight();
         Vector3 lightPosition = light.getPosition();
-
         Vector3 lightDir = lightPosition.minus(polygon.getPoint1()).normalize(); //вектор между источником света и полигоном
         light.setDiffuse(polygon.getNormal(), lightDir); // коэффициент диффузного освещения
         Color polygonColor = polygon.getColor();
-        Color newColor = light.getObjectColor(polygonColor);
-
-        if (polygon.isLine())
-            polygonDrawer.drawPolygon(p1, p2, p3, polygon.getColor());
-        else {
-            polygonDrawer.fillPolygon(p1,p2,p3, newColor);
-            polygonDrawer.drawPolygon(p1, p2, p3, Color.BLACK);
-
-        }
+        return light.getObjectColor(polygonColor);
     }
 
 
