@@ -7,8 +7,6 @@ package draw;
 import math.Vector3;
 import rasterization.polygonDrawers.PolygonDrawer;
 import screen.ScreenConverter;
-import screen.ScreenDepthPoint;
-import screen.ScreenPoint;
 import screen.ScreenPolygon;
 import third.Light;
 import third.Polygon;
@@ -28,16 +26,9 @@ public class ScreenPolygonDrawer extends MyDrawer {
         ScreenConverter screenConverter = getScreenConverter();
         PolygonDrawer polygonDrawer = getPolygonDrawer();
         /*переводим все точки в экранные*/
-        ScreenPoint p1 = screenConverter.realToScreen(polygon.getPoint1());
-        ScreenPoint p2 = screenConverter.realToScreen(polygon.getPoint2());
-        ScreenPoint p3 = screenConverter.realToScreen(polygon.getPoint3());
         Color newColor = getNewColor(polygon);
-        ScreenPolygon screenPolygon = new ScreenPolygon(
-                polygon,
-                new ScreenDepthPoint(p1),
-                new ScreenDepthPoint(p2),
-                new ScreenDepthPoint(p3),
-                newColor);
+        ScreenPolygon screenPolygon = screenConverter.realToScreen(polygon);
+        screenPolygon.setColor(newColor);
         if (polygon.isLine()) {
             screenPolygon.setColor(polygon.getColor());
             polygonDrawer.drawPolygon(screenPolygon);
@@ -45,7 +36,6 @@ public class ScreenPolygonDrawer extends MyDrawer {
         else {
             polygonDrawer.fillPolygon(screenPolygon);
 //            polygonDrawer.drawPolygon(screenPolygon);
-
         }
     }
 
@@ -58,7 +48,6 @@ public class ScreenPolygonDrawer extends MyDrawer {
         return light.getObjectColor(polygonColor);
     }
 
-
     /**
      * В данной реализации возвращаем фильтр, который одобряет все полилинии.
      *
@@ -69,7 +58,7 @@ public class ScreenPolygonDrawer extends MyDrawer {
     protected Filter<Polygon> getPolygonFilter() {
         return new Filter<Polygon>() {
             @Override
-            public boolean permit(Polygon value) {
+            public boolean permit(Polygon polygon) {
                 return true;
             }
         };

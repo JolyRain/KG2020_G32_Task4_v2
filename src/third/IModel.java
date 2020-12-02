@@ -4,6 +4,9 @@
  */
 package third;
 
+import javafx.scene.shape.Polyline;
+import math.Vector3;
+
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +28,15 @@ public interface IModel {
             lines.add(polygon.getBorder());
         }
         return lines;
+    }
+
+    default List<Vector3> getPoints() {
+        List<PolyLine> polyLines = getLines();
+        List<Vector3> points = new LinkedList<>();
+        for (PolyLine polyLine : polyLines) {
+            points.addAll(polyLine.getPoints());
+        }
+        return points;
     }
 
     List<Polygon> getPolygons();

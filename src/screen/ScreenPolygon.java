@@ -1,24 +1,31 @@
 package screen;
 
-import math.Vector3;
 import rasterization.buffer.ZValueResolver;
 import third.Polygon;
 
 import java.awt.*;
 
-public class ScreenPolygon implements ZValueResolver {
+public class ScreenPolygon {
     private Polygon polygon;
     private ScreenDepthPoint depthPoint1;
     private ScreenDepthPoint depthPoint2;
     private ScreenDepthPoint depthPoint3;
     private Color color;
 
-    public ScreenPolygon(Polygon polygon, ScreenDepthPoint depthPoint1, ScreenDepthPoint depthPoint2, ScreenDepthPoint depthPoint3, Color color) {
+
+    public ScreenPolygon(Polygon polygon,
+                         ScreenDepthPoint depthPoint1,
+                         ScreenDepthPoint depthPoint2,
+                         ScreenDepthPoint depthPoint3,
+                         Color color) {
         this.polygon = polygon;
         this.depthPoint1 = depthPoint1;
         this.depthPoint2 = depthPoint2;
         this.depthPoint3 = depthPoint3;
         this.color = color;
+        depthPoint1.setZ(polygon.getPoint1().getZ());
+        depthPoint2.setZ(polygon.getPoint2().getZ());
+        depthPoint3.setZ(polygon.getPoint3().getZ());
     }
 
 
@@ -74,12 +81,5 @@ public class ScreenPolygon implements ZValueResolver {
         this.color = color;
     }
 
-    @Override
-    public float resolve(ScreenPoint point) {
-        float a = polygon.getNormal().getX();
-        float b = polygon.getNormal().getY();
-        float c = polygon.getNormal().getZ();
 
-        return 0;
-    }
 }

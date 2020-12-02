@@ -7,9 +7,6 @@ import third.IModel;
 
 public interface ModelOperable {
 
-
-
-
     boolean isInnerPoint(IModel model, Vector3 point);
 
     Vector3 getMaxPoint(IModel model, Axis axis);
@@ -33,6 +30,8 @@ public interface ModelOperable {
     default float getCoordinate(Vector3 point, Axis axis) {
         return axis.equals(Axis.X) ? point.getX() : axis.equals(Axis.Y) ? point.getY() : point.getZ();
     }
+
+
 
 }
 

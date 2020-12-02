@@ -42,7 +42,7 @@ public class MyPolygonDrawer implements PolygonDrawer {
         ScreenPoint sp1 = screenPolygon.getScreenPoint1();
         ScreenPoint sp2 = screenPolygon.getScreenPoint2();
         ScreenPoint sp3 = screenPolygon.getScreenPoint3();
-        ZValueResolver resolver = new ZPlaneResolver(screenPolygon.getPolygon());
+        ZValueResolver resolver = new ZPlaneResolver(screenPolygon);
         ScreenPoint topLeft = topLeft(sp1, sp2, sp3);
         ScreenPoint bottomRight = bottomRight(sp1, sp2, sp3);
         for (int y = topLeft.getJ(); y <= bottomRight.getJ(); y++) {
@@ -53,11 +53,11 @@ public class MyPolygonDrawer implements PolygonDrawer {
 //                float zb = sdp1.getZ() + (sdp3.getZ() - sdp1.getZ()) * (float) ((y - sp1.getJ()));
 //                float z = za + (zb - za) * ((x - xa) / (xb - xa));
                 ScreenPoint point = new ScreenPoint(x, y);
-                float z = resolver.resolve(point);
-                if (isInnerPoint(new ScreenPoint(x, y), sp1, sp2, sp3)) {
-                    if (depthBuffer.checkDepth(point, z)) {
+//                float z = resolver.resolve(point);
+                if (isInnerPoint(point, sp1, sp2, sp3)) {
+//                    if (depthBuffer.checkDepth(point, z)) {
                         pixelDrawer.drawPixel(x, y, screenPolygon.getColor());
-                    }
+//                    }
                 }
             }
         }

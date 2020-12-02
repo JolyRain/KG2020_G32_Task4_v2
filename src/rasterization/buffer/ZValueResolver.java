@@ -4,5 +4,5 @@ import screen.ScreenPoint;
 
 public interface ZValueResolver {
 
-    float resolve(ScreenPoint point);
+    int resolve(ScreenPoint point);
 }

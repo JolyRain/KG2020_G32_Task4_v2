@@ -19,13 +19,6 @@ public class Polygon {
         this.color = color;
     }
 
-    public Vector3 getNormal() {
-        Vector3 u = point3.minus(point1);   //вычисляем вектора лежащие на плоскости
-        Vector3 v = point2.minus(point1);
-        Vector3 w = point2.minus(point3);
-        return (u.getNormal(v).plus(u.getNormal(w).plus(v.getNormal(w)))).mul(1f / 3f); //находим нормаль полигона
-    }
-
     public Polygon() {
     }
 
@@ -33,6 +26,13 @@ public class Polygon {
         this.point1 = point1;
         this.point2 = point2;
         this.point3 = point3;
+    }
+
+    public Vector3 getNormal() {
+        Vector3 u = point3.minus(point1);   //вычисляем вектора лежащие на плоскости
+        Vector3 v = point2.minus(point1);
+        Vector3 w = point2.minus(point3);
+        return (u.getNormal(v).plus(u.getNormal(w).plus(v.getNormal(w)))).mul(1f / 3f); //находим нормаль полигона
     }
 
     public boolean isInnerPoint(Vector3 point) {
@@ -69,6 +69,34 @@ public class Polygon {
         for (Vector3 v : points)
             sum += v.getY();
         return sum / points.size();
+    }
+
+    public float getMaxX() {
+        return Math.max(point1.getX(), Math.max(point2.getX(), point3.getX()));
+    }
+
+    public float getMaxY() {
+        return Math.max(point1.getY(), Math.max(point2.getY(), point3.getY()));
+
+    }
+
+    public float getMaxZ() {
+        return Math.max(point1.getZ(), Math.max(point2.getZ(), point3.getZ()));
+
+    }
+
+    public float getMinX() {
+        return Math.min(point1.getX(), Math.min(point2.getX(), point3.getX()));
+    }
+
+    public float getMinY() {
+        return Math.min(point1.getY(), Math.min(point2.getY(), point3.getY()));
+
+    }
+
+    public float getMinZ() {
+        return Math.min(point1.getZ(), Math.min(point2.getZ(), point3.getZ()));
+
     }
 
     public boolean isLine() {

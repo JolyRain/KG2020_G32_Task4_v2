@@ -5,9 +5,11 @@
 package screen;
 
 import math.Vector3;
+import third.Polygon;
 
 /**
  * Класс, предоставляющий функциональность конвертирования реальных координат в экранные
+ *
  * @author Alexey
  */
 public class ScreenConverter {
@@ -22,22 +24,24 @@ public class ScreenConverter {
         this.ws = ws;
         this.hs = hs;
     }
-    
+
     /**
      * Метод, преобразующий реальные трёхмерные координаты в экранные.
      * Z-составляющая при этом не учитывается
+     *
      * @param v исходная трёхмерная точка
      * @return результирующая экранная точка.
      */
     public ScreenPoint realToScreen(Vector3 v) {
-        int i = (int)((v.getX() - xr) * ws / wr);
-        int j = (int)((yr - v.getY()) * hs / hr);
+        int i = (int) ((v.getX() - xr) * ws / wr);
+        int j = (int) ((yr - v.getY()) * hs / hr);
         return new ScreenPoint(i, j);
     }
-    
+
     /**
      * Метод, преобразующий экранные координаты в трёхмерные.
      * Z-составляющая при этом устанавливается в указанное значение
+     *
      * @param p исходная трёхмерная точка
      * @param z Z-составляющая
      * @return результирующая трёхмерная точка.
@@ -45,21 +49,32 @@ public class ScreenConverter {
     public Vector3 screenToReal(ScreenPoint p, float z) {
         double x = xr + p.getI() * wr / ws;
         double y = yr - p.getJ() * hr / hs;
-        return new Vector3((float)x, (float)y, z);
+        return new Vector3((float) x, (float) y, z);
     }
-    
+
+    public ScreenPolygon realToScreen(Polygon polygon) {
+        return new ScreenPolygon(
+                polygon,
+                new ScreenDepthPoint(realToScreen(polygon.getPoint1())),
+                new ScreenDepthPoint(realToScreen(polygon.getPoint2())),
+                new ScreenDepthPoint(realToScreen(polygon.getPoint3())),
+                polygon.getColor());
+    }
+
     /**
      * Метод, преобразующий экранные координаты в трёхмерные.
      * Z-составляющая при этом устанавливается в 0
+     *
      * @param p исходная трёхмерная точка
      * @return результирующая трёхмерная точка.
      */
     public Vector3 screenToReal(ScreenPoint p) {
         return screenToReal(p, 0);
     }
-    
+
     /**
      * Устанавливает новый размер экрана
+     *
      * @param w ширина
      * @param h высота
      */
@@ -115,5 +130,5 @@ public class ScreenConverter {
     public void setYr(double yr) {
         this.yr = yr;
     }
-    
+
 }

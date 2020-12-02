@@ -11,7 +11,7 @@ import java.util.List;
 public class Model implements IModel {
 
     private List<Polygon> polygons;
-    private Color color = Color.BLACK;
+    private Color color;
 
     public Model(List<Polygon> polygons) {
         this.polygons = polygons;

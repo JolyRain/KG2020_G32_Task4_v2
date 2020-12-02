@@ -1,10 +1,7 @@
 package rasterization.polygonDrawers;
 
 import rasterization.pixelDrawers.PixelDrawer;
-import screen.ScreenPoint;
 import screen.ScreenPolygon;
-
-import java.awt.*;
 
 public interface PolygonDrawer {
 

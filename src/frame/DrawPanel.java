@@ -3,6 +3,7 @@ package frame;/*
  * and open the template in the editor.
  */
 
+import binaryOperations.IntersectionOperator;
 import binaryOperations.Operator;
 import binaryOperations.UnionOperator;
 import draw.Drawer;
@@ -70,13 +71,15 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         );
 
         Operator unionOperator = new UnionOperator();
+        Operator intersect = new IntersectionOperator();
         IModel circle = new Circle(new Vector3(0, 0, 0), 20, Color.RED);
         IModel circle1 = new Circle(new Vector3(30, 0, 0), 20, Color.GREEN);
         Sphere s1 = new Sphere(10);
-        Sphere s2 = new Sphere(10, new Vector3(10, 0, 0));
+        Sphere s2 = new Sphere(10, new Vector3(10, 0, 0), Color.GREEN);
 
-        scene.getModelsList().add(s2);
-        scene.getModelsList().add(s1);
+//        scene.getModelsList().add(s2);
+//        scene.getModelsList().add(s1);
+        scene.getModelsList().add(intersect.operate(s1,s2));
 //        scene.getModelsList().add(p1);
 //        scene.getModelsList().add(p2);
 //        scene.getModelsList().add(circle);
