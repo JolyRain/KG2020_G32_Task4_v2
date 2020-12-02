@@ -16,6 +16,7 @@ public class ModelOperator implements ModelOperable {
 
     @Override
     public Vector3 getMaxPoint(IModel model, Axis axis) {
+
         List<Vector3> points = model.getPoints();
         Vector3 maxPoint = points.get(0);
         for (Vector3 point : points) {
