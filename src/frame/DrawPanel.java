@@ -5,6 +5,7 @@ package frame;/*
 
 import binaryOperations.IntersectionOperator;
 import binaryOperations.Operator;
+import binaryOperations.SubtractionOperator;
 import binaryOperations.UnionOperator;
 import draw.Drawer;
 import draw.ScreenPolygonDrawer;
@@ -71,11 +72,12 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         );
 
         Operator unionOperator = new UnionOperator();
-        Operator intersect = new IntersectionOperator();
+        Operator subOperator = new SubtractionOperator();
+        Operator intersect = new IntersectionOperator(camera);
         IModel circle = new Circle(new Vector3(0, 0, 0), 20, Color.RED);
         IModel circle1 = new Circle(new Vector3(30, 0, 0), 20, Color.GREEN);
         Sphere s1 = new Sphere(10);
-        Sphere s2 = new Sphere(10, new Vector3(10, 0, 0), Color.GREEN);
+        Sphere s2 = new Sphere(10, new Vector3(5, 5, 0), Color.GREEN);
 
 //        scene.getModelsList().add(s2);
 //        scene.getModelsList().add(s1);

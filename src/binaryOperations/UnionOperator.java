@@ -5,45 +5,35 @@ import models.Model;
 import third.IModel;
 import third.Polygon;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class UnionOperator implements Operator {
+    private Operator intersect = new IntersectionOperator();
 
     @Override
     public IModel operate(IModel first, IModel second) {
-        IModel newModel = new Model(first.getPolygons(), first.getColor());
-        for (Polygon polygon : second.getPolygons()) {
-            polygon.setColor(newModel.getColor());
-            newModel.getPolygons().add(polygon);
-        }
-        return newModel;
-    }
+        List<Polygon> intersectPolygons;
+        List<Polygon> firstPolygons = first.getPolygons();
+        List<Polygon> secondPolygons = second.getPolygons();
+        List<Polygon> newPolygons = new LinkedList<>();
 
-    private float maxZ(IModel model) {
-        float maxZ = Float.MIN_VALUE;
-        for (Polygon polygon : model.getPolygons()) {
-            for (Vector3 point : polygon.getBorder().getPoints()) {
-                if (point.getZ() > maxZ)
-                    maxZ = point.getZ();
+        intersectPolygons = intersect.operate(first,second).getPolygons();
+
+        for (Polygon polygon : firstPolygons) {
+            if (!intersectPolygons.contains(polygon)) {
+                newPolygons.add(polygon);
             }
         }
-        return maxZ;
-    }
 
-    private float minZ(IModel model) {
-        float minZ = Float.MAX_VALUE;
-        for (Polygon polygon : model.getPolygons()) {
-            for (Vector3 point : polygon.getBorder().getPoints()) {
-                if (point.getZ() < minZ)
-                    minZ = point.getZ();
+        for (Polygon polygon : secondPolygons) {
+            if (!intersectPolygons.contains(polygon)) {
+                newPolygons.add(polygon);
             }
         }
-        return minZ;
+
+
+        return new Model(newPolygons);
     }
 
-    private float maxZ(IModel first, IModel second) {
-        return Math.max(maxZ(first), maxZ(second));
-    }
-
-    private float minZ(IModel first, IModel second) {
-        return Math.min(minZ(first), minZ(second));
-    }
 }

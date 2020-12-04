@@ -1,10 +1,13 @@
 package third;
 
 import math.Vector3;
+import models.Line;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Polygon {
     private Vector3 point1;
@@ -22,21 +25,32 @@ public class Polygon {
     public Polygon() {
     }
 
+    public List<Line> gerRays() {
+        List<Line> rays = new LinkedList<>();
+        Vector3 farPoint = new Vector3(Float.MAX_VALUE, 0,0);
+        for (Vector3 point : getBorder().getPoints()) {
+            rays.add(new Line(point, farPoint));
+        }
+        return rays;
+    }
+
+
     public Polygon(Vector3 point1, Vector3 point2, Vector3 point3) {
         this.point1 = point1;
         this.point2 = point2;
         this.point3 = point3;
     }
 
-    public Vector3 getNormal() {
+    public Vector3 normal() {
         Vector3 u = point3.minus(point1);   //вычисляем вектора лежащие на плоскости
         Vector3 v = point2.minus(point1);
         Vector3 w = point2.minus(point3);
-        return (u.getNormal(v).plus(u.getNormal(w).plus(v.getNormal(w)))).mul(1f / 3f); //находим нормаль полигона
+        return u.cross(v).normalize();
+//        return (u.getNormal(v).plus(u.getNormal(w).plus(v.getNormal(w)))).mul(1f / 3f); //находим нормаль полигона
     }
 
     public boolean isInnerPoint(Vector3 point) {
-        Vector3 normal = getNormal();
+        Vector3 normal = normal();
         float a = normal.getX(), b = normal.getY(), c = normal.getZ();
         return a * point.getX() + b * point.getY() + c * point.getZ() == 0;
     }
@@ -141,5 +155,21 @@ public class Polygon {
 
     public void setPoint3(Vector3 point3) {
         this.point3 = point3;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Polygon polygon = (Polygon) o;
+        return Objects.equals(point1, polygon.point1) &&
+                Objects.equals(point2, polygon.point2) &&
+                Objects.equals(point3, polygon.point3) &&
+                Objects.equals(color, polygon.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(point1, point2, point3, color);
     }
 }

@@ -7,6 +7,7 @@ package draw;
 import math.Vector3;
 import rasterization.polygonDrawers.PolygonDrawer;
 import screen.ScreenConverter;
+import screen.ScreenPoint;
 import screen.ScreenPolygon;
 import third.Light;
 import third.Polygon;
@@ -29,13 +30,16 @@ public class ScreenPolygonDrawer extends MyDrawer {
         Color newColor = getNewColor(polygon);
         ScreenPolygon screenPolygon = screenConverter.realToScreen(polygon);
         screenPolygon.setColor(newColor);
-        if (polygon.isLine()) {
-            screenPolygon.setColor(polygon.getColor());
-            polygonDrawer.drawPolygon(screenPolygon);
-        }
-        else {
-            polygonDrawer.fillPolygon(screenPolygon);
-//            polygonDrawer.drawPolygon(screenPolygon);
+        Filter<ScreenPolygon> filter = getScreenPolygonFilter();
+        if (filter.permit(screenPolygon)) {
+            if (polygon.isLine()) {
+                screenPolygon.setColor(polygon.getColor());
+                polygonDrawer.drawPolygon(screenPolygon);
+            } else {
+                polygonDrawer.fillPolygon(screenPolygon);
+                screenPolygon.setColor(Color.BLACK);
+                polygonDrawer.drawPolygon(screenPolygon);
+            }
         }
     }
 
@@ -43,9 +47,26 @@ public class ScreenPolygonDrawer extends MyDrawer {
         Light light = getLight();
         Vector3 lightPosition = light.getPosition();
         Vector3 lightDir = lightPosition.minus(polygon.getPoint1()).normalize(); //вектор между источником света и полигоном
-        light.setDiffuse(polygon.getNormal(), lightDir); // коэффициент диффузного освещения
+        light.setDiffuse(polygon.normal(), lightDir); // коэффициент диффузного освещения
         Color polygonColor = polygon.getColor();
         return light.getObjectColor(polygonColor);
+    }
+
+    private Filter<ScreenPolygon> getScreenPolygonFilter() {
+        return new Filter<ScreenPolygon>() {
+            @Override
+            public boolean permit(ScreenPolygon value) {
+                   return isValidPoint(value.getScreenPoint1())
+                           || isValidPoint(value.getScreenPoint2())
+                           || isValidPoint(value.getScreenPoint3());
+            }
+            private boolean isValidPoint(ScreenPoint point) {
+                return point.getI() >= 0
+                        && point.getJ() >= 0
+                        && point.getI() <= getScreenConverter().getWs()
+                        && point.getJ() <= getScreenConverter().getHs();
+            }
+        };
     }
 
     /**

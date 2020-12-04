@@ -9,7 +9,6 @@ import java.util.List;
 
 public class Light{
     private static final float AMBIENT_LIGHTING = 0.2f;
-//    private Vector3 position = new Vector3(0f, 0, 10);
     private Vector3 color = new Vector3(1f, 1f, 1f); //здесь вектор - это набор из rgb компонентов
     private Vector3 diffuse;
     private IPositionProvider positionProvider;
