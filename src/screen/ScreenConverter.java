@@ -53,11 +53,15 @@ public class ScreenConverter {
     }
 
     public ScreenPolygon realToScreen(Polygon polygon) {
+        Vector3 p1 = polygon.getPoint1();
+        Vector3 p2 = polygon.getPoint2();
+        Vector3 p3 = polygon.getPoint3();
+
         return new ScreenPolygon(
                 polygon,
-                new ScreenDepthPoint(realToScreen(polygon.getPoint1())),
-                new ScreenDepthPoint(realToScreen(polygon.getPoint2())),
-                new ScreenDepthPoint(realToScreen(polygon.getPoint3())),
+                new ScreenDepthPoint(realToScreen(p1), p1.getZ() * ws),
+                new ScreenDepthPoint(realToScreen(p2), p2.getZ() * ws),
+                new ScreenDepthPoint(realToScreen(p3), p3.getZ() * ws),
                 polygon.getColor());
     }
 

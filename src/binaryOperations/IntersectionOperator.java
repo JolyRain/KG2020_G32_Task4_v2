@@ -3,6 +3,7 @@ package binaryOperations;
 import math.Vector3;
 import modelOperations.ModelOperable;
 import modelOperations.ModelOperator;
+import models.IntersectionResult;
 import models.Line;
 import models.Model;
 import models.Ray;
@@ -10,15 +11,18 @@ import third.IModel;
 import third.IPositionProvider;
 import third.Polygon;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class IntersectionOperator implements Operator {
 
     private final float TRIANGLE_EPSILON = 1e-10f;
+    float EPS = 1e-10f;
     private ModelOperable modelOperator = new ModelOperator();
-
     private IPositionProvider positionProvider;
+    private Map<Polygon, Polygon> intersectMap = new HashMap<>();
 
     public IntersectionOperator(IPositionProvider positionProvider) {
         this.positionProvider = positionProvider;
@@ -29,25 +33,49 @@ public class IntersectionOperator implements Operator {
 
     @Override
     public IModel operate(IModel first, IModel second) {
-        List<Polygon> newPolygons = new LinkedList<>();
-        List<Polygon> firstPolygons = first.getPolygons();
-        List<Polygon> secondPolygons = second.getPolygons();
+        return new Model(getIntersect(first, second).getPolygons());
+    }
 
+    private void initMap(IModel model) {
+        for (Polygon polygon : model.getPolygons())  {
+            intersectMap.put(polygon, null);
+        }
+    }
+
+    private void removeUnnecessary() {
+        intersectMap.entrySet().removeIf(entry -> entry.getValue() == null);
+    }
+
+    IntersectionResult getIntersect(IModel model1, IModel model2) {
+        List<Polygon> firstInnerPolygons = new LinkedList<>();
+        List<Polygon> firstOwnPolygons = new LinkedList<>();
+        List<Polygon> firstIntersectPolygons = new LinkedList<>();
+        List<Polygon> secondInnerPolygons = new LinkedList<>();
+        List<Polygon> secondOwnPolygons = new LinkedList<>();
+        List<Polygon> secondIntersectPolygons = new LinkedList<>();
+        List<Polygon> firstPolygons = model1.getPolygons();
+        List<Polygon> secondPolygons = model2.getPolygons();
+
+        initMap(model1);
         for (Polygon polygonFirst : firstPolygons) {
-            if (isInnerPolygon(second, polygonFirst)) {
-                newPolygons.add(polygonFirst);
-            } else if (isIntersectionPolygon(second, polygonFirst)) {
-                newPolygons.add(polygonFirst);
-            }
+            if (isInnerPolygon(model2, polygonFirst))
+                firstInnerPolygons.add(polygonFirst);
+            else if (isIntersectionPolygon(model2, polygonFirst))
+                firstIntersectPolygons.add(polygonFirst);
+            else
+                firstOwnPolygons.add(polygonFirst);
         }
         for (Polygon polygonSecond : secondPolygons) {
-            if (isInnerPolygon(first, polygonSecond)) {
-                newPolygons.add(polygonSecond);
-            } else if (isIntersectionPolygon(first, polygonSecond)) {
-                newPolygons.add(polygonSecond);
-            }
+            if (isInnerPolygon(model1, polygonSecond))
+                secondInnerPolygons.add(polygonSecond);
+            else if (isIntersectionPolygon(model1, polygonSecond))
+                secondIntersectPolygons.add(polygonSecond);
+            else
+                secondOwnPolygons.add(polygonSecond);
         }
-        return new Model(newPolygons);
+        firstInnerPolygons.addAll(firstIntersectPolygons);
+        secondInnerPolygons.addAll(secondIntersectPolygons);
+        return new IntersectionResult(firstInnerPolygons, firstOwnPolygons, secondInnerPolygons, secondOwnPolygons);
     }
 
     private boolean isInnerPolygon(IModel model, Polygon polygon) {
@@ -64,13 +92,9 @@ public class IntersectionOperator implements Operator {
 
     private boolean isInnerPoint(IModel model, Vector3 point) {
         int counter = 0;
-
-        Line ray = new Line(point, new Vector3(1000,1000,1000));
         for (Polygon polygon : model.getPolygons()) {
-
             Vector3 p = pointIntersect(new Ray(point), polygon); //находим точку пересечения луча и плоскости, в которой лежит полигон
-
-            if (p != null && barycentric(p, polygon)) { //проверяем находится ли точка внутри треугольника
+            if (p != null && inside_triangle(p, polygon)) { //проверяем находится ли точка внутри треугольника
                 counter++;
             }
         }
@@ -105,9 +129,32 @@ public class IntersectionOperator implements Operator {
         return start.plus(dir.mul(t));
     }
 
+    private float triangle_square(float a, float b, float c) {
+        float p = (a + b + c) / 2;
+        return (float) Math.sqrt(p * (p - a) * (p - b) * (p - c));
+    }
+
+    private boolean inside_triangle(Vector3 point, Polygon polygon) {
+        boolean inside = false;
+        float P_x = point.getX(), P_y = point.getY(), P_z = point.getZ();
+        float A_x = polygon.getPoint1().getX(), A_y = polygon.getPoint1().getY(), A_z = polygon.getPoint1().getZ();
+        float B_x = polygon.getPoint2().getX(), B_y = polygon.getPoint2().getY(), B_z = polygon.getPoint2().getZ();
+        float C_x = polygon.getPoint3().getX(), C_y = polygon.getPoint3().getY(), C_z = polygon.getPoint3().getZ();
+
+        float AB = (float) Math.sqrt((A_x - B_x) * (A_x - B_x) + (A_y - B_y) * (A_y - B_y) + (A_z - B_z) * (A_z - B_z));
+        float BC = (float) Math.sqrt((B_x - C_x) * (B_x - C_x) + (B_y - C_y) * (B_y - C_y) + (B_z - C_z) * (B_z - C_z));
+        float CA = (float) Math.sqrt((A_x - C_x) * (A_x - C_x) + (A_y - C_y) * (A_y - C_y) + (A_z - C_z) * (A_z - C_z));
+
+        float AP = (float) Math.sqrt((P_x - A_x) * (P_x - A_x) + (P_y - A_y) * (P_y - A_y) + (P_z - A_z) * (P_z - A_z));
+        float BP = (float) Math.sqrt((P_x - B_x) * (P_x - B_x) + (P_y - B_y) * (P_y - B_y) + (P_z - B_z) * (P_z - B_z));
+        float CP = (float) Math.sqrt((P_x - C_x) * (P_x - C_x) + (P_y - C_y) * (P_y - C_y) + (P_z - C_z) * (P_z - C_z));
+        float diff = (triangle_square(AP, BP, AB) + triangle_square(AP, CP, CA) + triangle_square(BP, CP, BC)) - triangle_square(AB, BC, CA);
+        if (Math.abs(diff) < triangle_square(AB, BC, CA) / 1000) inside = true;
+        return inside;
+    }
+
     /////////////////////////////////////////////////////////////
     //useless methods
-
 
     // возвращает расстояние по лучу от rayPos до точки пересечения
 // отрицательное расстояние значит пересечение не найдено (луч уходит)

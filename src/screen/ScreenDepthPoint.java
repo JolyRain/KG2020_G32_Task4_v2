@@ -9,9 +9,6 @@ public class ScreenDepthPoint {
         this.z = z;
     }
 
-    public ScreenDepthPoint(ScreenPoint screenPoint) {
-        this.screenPoint = screenPoint;
-    }
 
     public ScreenPoint getScreenPoint() {
         return screenPoint;

@@ -16,7 +16,7 @@ public class Sphere implements IModel {
     private float radius;
     private final float APPROXIMATION = 12;
     private Vector3 center = new Vector3(0, 0, 0);
-    private Color color = Color.RED;
+    private Color color;
 
     public Sphere(float radius, Vector3 center) {
         this.radius = radius;
@@ -33,8 +33,6 @@ public class Sphere implements IModel {
         this.color = color;
     }
 
-
-
     private float getLevelRadius(float level) {
         float cathetus = center.getZ() - level;
         return (float) sqrt(radius * radius - cathetus * cathetus);
@@ -46,16 +44,16 @@ public class Sphere implements IModel {
         float x, y, step;
         float x1, y1, nextAlpha, nextZ;
 
-        step = (float) PI / APPROXIMATION;
+        step = (float) ((float) 2 * PI / APPROXIMATION);
         float topLevel = center.getZ() + radius;
         float bottomLevel = center.getZ() - radius;
         float levelStep = 2 * radius / (APPROXIMATION);
 
         Vector3 p1, p2, p3, p4;
-        for (float level = topLevel - levelStep / 2; level >= bottomLevel + levelStep; level -= levelStep) {
+        for (float level = topLevel - levelStep / 2; level > bottomLevel + levelStep; level -= levelStep) {
             float levelRadius = getLevelRadius(level);
             float nextLevelRadius = getLevelRadius(level - levelStep);
-            for (float alpha = 0; alpha < 2 * PI; alpha += step) {
+            for (float alpha = 0; alpha < 2 * PI - step; alpha += step) {
                 nextAlpha = alpha + step;
                 nextZ = level - levelStep;
 
@@ -100,7 +98,7 @@ public class Sphere implements IModel {
         levelStep /= 2;
         float levelRadius = getLevelRadius(level);
         float nextLevelRadius = getLevelRadius(level - levelStep);
-        for (float alpha = 0; alpha < 2 * PI; alpha += step) {
+        for (float alpha = 0; alpha < 2 * PI - step; alpha += step) {
 
             x = getX(levelRadius, alpha); //current level point
             y = getY(levelRadius, alpha);
