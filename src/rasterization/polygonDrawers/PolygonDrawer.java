@@ -10,4 +10,6 @@ public interface PolygonDrawer {
     void fillPolygon(ScreenPolygon screenPolygon);
 
     PixelDrawer getPixelDrawer();
+
+    void clear(int color, int ws, int hs);
 }

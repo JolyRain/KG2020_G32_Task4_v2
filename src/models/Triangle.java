@@ -7,6 +7,7 @@ import third.Polygon;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,10 +23,6 @@ public class Triangle implements IModel {
         this.pointC = pointC;
     }
 
-    @Override
-    public Color getColor() {
-        return color;
-    }
     public Triangle(Vector3 pointA, Vector3 pointB, Vector3 pointC, Color color) {
         this.pointA = pointA;
         this.pointB = pointB;
@@ -38,6 +35,11 @@ public class Triangle implements IModel {
     }
 
     @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
     public List<PolyLine> getLines() {
         List<PolyLine> lines = new LinkedList<>();
         lines.add(new PolyLine(Arrays.asList(pointA, pointB, pointC), color, true));
@@ -46,7 +48,7 @@ public class Triangle implements IModel {
 
     @Override
     public List<Polygon> getPolygons() {
-        return null;
+        return Collections.singletonList(new Polygon(pointA, pointB, pointC, color));
     }
 
     public Vector3 getPointA() {

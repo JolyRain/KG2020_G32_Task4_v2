@@ -2,14 +2,14 @@ package models;
 
 import math.Vector3;
 
-public class Ray {
+public class Ray extends Line {
+    private static final Vector3 END = new Vector3(1000, 1000, 1000);
     private Vector3 start;
-    private final Vector3 END = new Vector3(1000,1000,1000);
     private Vector3 direction;
 
     public Ray(Vector3 start) {
+        super(start, END);
         this.start = start;
-        direction = END.minus(start);
     }
 
     public Vector3 getStart() {

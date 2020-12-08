@@ -9,6 +9,8 @@ import screen.ScreenDepthPoint;
 import screen.ScreenPoint;
 import screen.ScreenPolygon;
 
+import java.awt.*;
+
 public class MyPolygonDrawer implements PolygonDrawer {
     private PixelDrawer pixelDrawer;
     private LineDrawer lineDrawer;
@@ -103,6 +105,15 @@ public class MyPolygonDrawer implements PolygonDrawer {
     @Override
     public PixelDrawer getPixelDrawer() {
         return pixelDrawer;
+    }
+
+    @Override
+    public void clear(int color, int ws, int hs) {
+        for (int y = 0; y <= ws; y++) {
+            for (int x = 0; x <= hs; x++) {
+                pixelDrawer.drawPixel(x,y, new Color(color));
+            }
+        }
     }
 
     public void setPixelDrawer(PixelDrawer pixelDrawer) {

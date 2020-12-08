@@ -3,29 +3,27 @@ package frame;/*
  * and open the template in the editor.
  */
 
-import binaryOperations.IntersectionOperator;
-import binaryOperations.Operator;
-import binaryOperations.SubtractionOperator;
-import binaryOperations.UnionOperator;
+import binaryOperations.*;
 import draw.Drawer;
 import draw.ScreenPolygonDrawer;
 import math.Vector3;
-import models.Circle;
-import models.Parallelepiped;
-import models.Sphere;
+import models.*;
 import rasterization.buffer.DepthBuffer;
 import rasterization.lineDrawers.BresenhamLineDrawer;
 import rasterization.lineDrawers.LineDrawer;
 import rasterization.pixelDrawers.BufferedImagePixelDrawer;
 import rasterization.pixelDrawers.PixelDrawer;
+import rasterization.polygonDrawers.GraphicsPolygonDrawer;
 import rasterization.polygonDrawers.MyPolygonDrawer;
 import rasterization.polygonDrawers.PolygonDrawer;
 import screen.ScreenConverter;
 import third.*;
+import third.Polygon;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  * @author Alexey
@@ -54,12 +52,29 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         Operator intersect = new IntersectionOperator();
         Sphere s1 = new Sphere(10, new Vector3(0,0,0), Color.RED);
         Sphere s2 = new Sphere(10, new Vector3(5,0,0), Color.BLUE);
-
-//        getScene().getModelsList().add(s1);
+        Triangle triangle = new Triangle(
+                new Vector3(0,0,0),
+                new Vector3(0,0,10),
+                new Vector3(0,10,0),
+                new Color(255,0,0,50));
+        Triangle triangle1 = new Triangle(
+                new Vector3(10,-15,5),  //one inner {10,2,5}   all inner {10,0,5}  all inside {10,-15,5}
+                new Vector3(10,15,5), //one inner {10,15,5}  all inner {10,10,5}    all inside {10,15,5}
+                new Vector3(-5,3,5),  //one inner {-5,3,5}   all inner {-5,1,5}     all inside {-5,3,5}
+                new Color(0,0,255,50));
+//        scene.getModelsList().add(triangle);
+//        scene.getModelsList().add(triangle1);
+//
+//                getScene().getModelsList().add(s1);
 //        getScene().getModelsList().add(s2);
+        PolygonSeparator separator = new PolygonSeparator();
+//        IModel model = new Model(separator.separate(triangle.getPolygons().get(0), triangle1.getPolygons().get(0)));
+//        scene.getModelsList().add(model);
+        IModel inter = intersect.operate(s1, s2);
+        scene.getModelsList().add(inter);
 
-        getScene().getModelsList().add(intersect.operate(s1,s2));
-
+//        getScene().getModelsList().add(intersect.operate(s1,s2));
+        System.out.println("a");
     }
 
     @Override
@@ -69,7 +84,9 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
         Graphics2D graphics2D = (Graphics2D) bufferedImage.getGraphics();
         PixelDrawer pixelDrawer = new BufferedImagePixelDrawer(bufferedImage);
         LineDrawer lineDrawer = new BresenhamLineDrawer(pixelDrawer);
-        PolygonDrawer polygonDrawer = new MyPolygonDrawer(pixelDrawer, lineDrawer, new DepthBuffer(getWidth(), getHeight()));
+//        PolygonDrawer polygonDrawer = new MyPolygonDrawer(pixelDrawer, lineDrawer, new DepthBuffer(getWidth(), getHeight()));
+        PolygonDrawer polygonDrawer = new GraphicsPolygonDrawer(graphics2D);
+
         Drawer drawer = new ScreenPolygonDrawer(screenConverter, polygonDrawer, light);
         scene.drawScene(drawer, camera);
         g.drawImage(bufferedImage, 0, 0, null);

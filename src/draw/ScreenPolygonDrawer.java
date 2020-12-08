@@ -37,8 +37,8 @@ public class ScreenPolygonDrawer extends MyDrawer {
                 polygonDrawer.drawPolygon(screenPolygon);
             } else {
                 polygonDrawer.fillPolygon(screenPolygon);
-//                screenPolygon.setColor(Color.BLACK);
-//                polygonDrawer.drawPolygon(screenPolygon);
+                screenPolygon.setColor(Color.BLACK);
+                polygonDrawer.drawPolygon(screenPolygon);
             }
         }
     }

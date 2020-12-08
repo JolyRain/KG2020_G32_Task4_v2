@@ -34,6 +34,10 @@ public class Vector3 {
         return this.cross(vector).normalize();
     }
 
+    public float angle(Vector3 other) {
+        return (float) Math.acos(this.scalar(other) / (this.length() * other.length()));
+    }
+
     public Vector3 cross(Vector3 other) {
         return new Vector3(
                 this.getY() * other.getZ() - this.getZ() * other.getY(),

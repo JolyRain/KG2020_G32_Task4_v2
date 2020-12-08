@@ -49,17 +49,7 @@ public abstract class MyDrawer implements Drawer {
 
     @Override
     public void clear(int color) {
-        PixelDrawer pixelDrawer = polygonDrawer.getPixelDrawer();
-        for (int y = 0; y <= screenConverter.getHs(); y++) {
-            for (int x = 0; x <= screenConverter.getWs(); x++) {
-                pixelDrawer.drawPixel(x,y, new Color(color));
-            }
-        }
-//        Graphics2D g = getGraphics();
-//        Color c = g.getColor();
-//        g.setColor(new Color(color));
-//        g.fillRect(0, 0, screenConverter.getWs(), screenConverter.getHs());
-//        g.setColor(c);
+        polygonDrawer.clear(color, screenConverter.getWs(), screenConverter.getHs());
     }
 
     /**
