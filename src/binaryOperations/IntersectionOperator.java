@@ -14,7 +14,7 @@ import java.util.List;
 public class IntersectionOperator implements Operator {
 
     private final float TRIANGLE_EPSILON = 1e-10f;
-    private IPolygonMath polygonMath = new PolygonMath();
+    private PolygonMath polygonMath = new PolygonMath();
     private PolygonSeparator polygonSeparator = new PolygonSeparator();
 
 
@@ -25,8 +25,11 @@ public class IntersectionOperator implements Operator {
     public IModel operate(IModel first, IModel second) {
         IntersectionResult model = getIntersect(first, second);
         List<Polygon> result = new LinkedList<>();
+        result.addAll(model.getFirstOwnPolygons());
         result.addAll(model.getFirstInnerPolygons());
-        result.addAll(model.getSecondInnerPolygons());
+//        result.addAll(model.getSecondInnerPolygons());
+//        result.addAll(model.getSecondOwnPolygons());
+
         return new Model(result);
     }
 
@@ -60,8 +63,11 @@ public class IntersectionOperator implements Operator {
         List<Polygon> separatedPolygons = new LinkedList<>();
         for (Polygon polygonFirst : firstIntersectPolygons) {
             for (Polygon polygonSecond : secondIntersectPolygons) {
-                if (polygonSeparator.separate(polygonFirst, polygonSecond) == null) continue;
-                separatedPolygons.addAll(polygonSeparator.separate(polygonFirst, polygonSecond));
+                if (polygonMath.isIntersectTriangles(polygonFirst, polygonSecond)) {
+                    if (polygonSeparator.separate(polygonFirst, polygonSecond) == null) continue;
+                    separatedPolygons.addAll(polygonSeparator.separate(polygonFirst, polygonSecond));
+//                    break;
+                }
             }
         }
         for (Polygon polygon : separatedPolygons) {
@@ -74,9 +80,10 @@ public class IntersectionOperator implements Operator {
 
         for (Polygon second : secondIntersectPolygons) {
             for (Polygon first : firstIntersectPolygons) {
-                if (polygonSeparator.separate(second, first) == null) continue;
-                separatedPolygons.addAll(polygonSeparator.separate(second, first));
-            }
+                if (polygonMath.isIntersectTriangles(second, first)) {
+                    if (polygonSeparator.separate(second, first) == null) continue;
+                    separatedPolygons.addAll(polygonSeparator.separate(second, first));
+            }}
         }
         for (Polygon polygon : separatedPolygons) {
             if (isInnerPolygon(model1, polygon))
@@ -84,6 +91,7 @@ public class IntersectionOperator implements Operator {
             else
                 secondOwnPolygons.add(polygon);
         }
+        separatedPolygons.clear();
 
         return new IntersectionResult(firstInnerPolygons, firstOwnPolygons, secondInnerPolygons, secondOwnPolygons);
     }

@@ -1,5 +1,6 @@
 package draw;
 
+import math.Vector3;
 import rasterization.pixelDrawers.PixelDrawer;
 import rasterization.polygonDrawers.PolygonDrawer;
 import screen.ScreenConverter;
@@ -46,6 +47,7 @@ public abstract class MyDrawer implements Drawer {
             drawPolygon(polygon);
         }
     }
+
 
     @Override
     public void clear(int color) {

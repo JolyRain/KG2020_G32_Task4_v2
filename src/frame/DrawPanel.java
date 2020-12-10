@@ -33,7 +33,17 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
     private ScreenConverter screenConverter;
     private Camera camera;
     private CameraController cameraController;
-
+    //problem
+//    Triangle triangle = new Triangle(
+//            new Vector3(5.728219f,3.3071887f,7.5000005f),
+//            new Vector3(3.3071885f, 5.728219f, 7.5000005f),
+//            new Vector3(1.9982625f, 3.4610925f, 9.166667f),
+//            new Color(255,0,0,50));
+//    Triangle triangle1 = new Triangle(
+//            new Vector3(4.9999995f, 6.6143775f, 7.5000005f),  //one inner {10,2,5}   all inner {10,0,5}  all inside {10,-15,5}
+//            new Vector3(1.6928109f, 5.7282186f, 7.5000005f), //one inner {10,15,5}  all inner {10,10,5}    all inside {10,15,5}
+//            new Vector3(3.001737f, 3.4610922f, 9.166667f),  //one inner {-5,3,5}   all inner {-5,1,5}     all inside {-5,3,5}
+//            new Color(0,0,255,50));
 
     private Light light;
 
@@ -58,22 +68,34 @@ public class DrawPanel extends JPanel implements CameraController.RepaintListene
                 new Vector3(0,10,0),
                 new Color(255,0,0,50));
         Triangle triangle1 = new Triangle(
-                new Vector3(10,-15,5),  //one inner {10,2,5}   all inner {10,0,5}  all inside {10,-15,5}
-                new Vector3(10,15,5), //one inner {10,15,5}  all inner {10,10,5}    all inside {10,15,5}
+                new Vector3(10,2,5),  //one inner {10,2,5}   all inner {10,0,5}  all inside {10,-15,5}
+                new Vector3(5,15,5), //one inner {10,15,5}  all inner {10,10,5}    all inside {10,15,5}
                 new Vector3(-5,3,5),  //one inner {-5,3,5}   all inner {-5,1,5}     all inside {-5,3,5}
                 new Color(0,0,255,50));
 //        scene.getModelsList().add(triangle);
 //        scene.getModelsList().add(triangle1);
+
+
 //
 //                getScene().getModelsList().add(s1);
 //        getScene().getModelsList().add(s2);
-        PolygonSeparator separator = new PolygonSeparator();
-//        IModel model = new Model(separator.separate(triangle.getPolygons().get(0), triangle1.getPolygons().get(0)));
+                PolygonSeparator separator = new PolygonSeparator();
+
+        List<Line> lines = separator.lines(triangle1.getPolygons().get(0));
+
+//        for (Line line : lines) {
+//            scene.getModelsList().add(new Line(line.getP1(), new PolygonMath().intersectPoint(line, triangle.getPolygons().get(0)), Color.GREEN));
+//        }
+        PolygonMath polygonMath = new PolygonMath();
+        System.out.println(polygonMath.isIntersectTriangles(triangle.getPolygons().get(0), triangle1.getPolygons().get(0)));
+
+        IModel model = new Model(separator.separate(triangle.getPolygons().get(0), triangle1.getPolygons().get(0)));
 //        scene.getModelsList().add(model);
         IModel inter = intersect.operate(s1, s2);
         scene.getModelsList().add(inter);
 
-//        getScene().getModelsList().add(intersect.operate(s1,s2));
+
+        //        getScene().getModelsList().add(intersect.operate(s1,s2));
         System.out.println("a");
     }
 

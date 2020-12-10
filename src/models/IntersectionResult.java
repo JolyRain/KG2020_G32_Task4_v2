@@ -11,6 +11,7 @@ public class IntersectionResult implements IModel {
     private List<Polygon> firstOwnPolygons;
     private List<Polygon> secondInnerPolygons;
     private List<Polygon> secondOwnPolygons;
+    
 
     private Color color = Color.LIGHT_GRAY;
 

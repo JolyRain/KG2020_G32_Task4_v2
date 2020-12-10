@@ -80,7 +80,17 @@ public class ScreenPolygonDrawer extends MyDrawer {
         return new Filter<Polygon>() {
             @Override
             public boolean permit(Polygon polygon) {
-                return true;
+                return !isNan(polygon);
+            }
+            private boolean isNan(Polygon polygon) {
+                for (Vector3 point : polygon.getBorder().getPoints()) {
+                    if (isNan(point)) return true;
+                }
+                return false;
+            }
+
+            private boolean isNan(Vector3 point) {
+                return Float.isNaN(point.getX()) || Float.isNaN(point.getY()) || Float.isNaN(point.getZ());
             }
         };
     }
